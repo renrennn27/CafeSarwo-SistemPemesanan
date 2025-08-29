@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cafe Sarwo</title>
+</head>
+<body>
+    <div class="container">
+        <h1>Cafe Sarwo - Sistem Pesanan</h1>
+        
+        <div class="main">
+            <div class="card menu-section">
+                <h2>Menu Tersedia</h2>
+                <div class="menu" id="menu"></div>
+            </div>
+
+            <div class="card form-section">
+                <h2>Form Pesanan</h2>
+                <form id="orderForm">
+                    <div class="form-group">
+                        <label for="customerName">Nama Pemesan:</label>
+                        <input type="text" id="customerName" required placeholder="Masukkan nama pemesan">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Tambah Item Pesanan:</label>
+                        <div class="order-item">
+                            <input type="text" id="menuItem" placeholder="Nama menu" list="menuList">
+                            <datalist id="menuList"></datalist>
+                            <input type="number" id="menuQuantity" placeholder="Jumlah" min="1" value="1">
+                            <button type="button" class="btn btn-add" onclick="addItem()">Tambah</button>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Daftar Pesanan:</label>
+                        <div class="order-items" id="orderItems">
+                            <p style="text-align: center; color: #95a5a6;">Belum ada item ditambahkan</p>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-submit">Kirim Pesanan</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="orders-grid">
+            <div class="card">
+                <h2>Belum Diantar</h2>
+                <div id="currentOrdersList"></div>
+            </div>
+
+            <div class="card">
+                <h2>Sudah Diantar</h2>
+                <div id="deliveredOrdersList"></div>
+            </div>
+        </div>
+    </div>
+
+
+    <script src="script.js"></script>
+</body>
+</html>
