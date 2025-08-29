@@ -1,3 +1,5 @@
+const { createElement } = require("react")
+
 const menuData = {
             'Espresso': 25000,
             'Cappuccino': 30000,
@@ -21,12 +23,10 @@ const menuData = {
             'Salad': 30000,
             'Cake': 35000
         }
+
 let tempOrderItems = []
-        let orderIdCounter = 1
-        let orders = {
-            pending: [],
-            delivered: []
-        }
+let orders = []
+let orderIdCounter = 1
 
 function initiaLizeMenu () {
     const menu = document.getElementById('menu')
@@ -98,7 +98,7 @@ function updateOrderItemDisplay() {
         itemDiv.className = 'order-item'
         itemDiv.innerHTML = `
             <span>${item.name}</span>
-            <span>${item.quantity}x @ Rp ${item.price.toLocaleString('id-ID')}</span>
+            <span>${item.quantity}x</span>
             <button type="button" class="btn btn-remove" onclick="removeItem(${index})">Hapus</button>
         `
         orderItems.appendChild(itemDiv)
@@ -132,11 +132,10 @@ document.getElementById('orderForm').addEventListener('submit', function(e) {
         customerName: customerName,
         items: [...tempOrderItems],
         total: total,
-        timestamp: new Date().toLocaleString('id-ID'),
-        status: 'pending'
+        timestamp: new Date().toLocaleString('id-ID')
     }
-
-    orders.pending.push(order)
+   
+    orders.push(order)
     displayOrders()
 
     document.getElementById('orderForm').reset()
@@ -147,74 +146,15 @@ document.getElementById('orderForm').addEventListener('submit', function(e) {
 })
 
 function displayOrders() {
-    const currentOrdersList = document.getElementById('currentOrdersList')
-    const deliveredOrdersList = document.getElementById('deliveredOrdersList')
+    const orderList = document.createElement('div')
+    dispatchEvent.className = 'receipt'
 
-    currentOrdersList.innerHTML = ''
-    deliveredOrdersList.innerHTML = ''
-    orders.pending.forEach(order => {
-        currentOrdersList.appendChild(createReceiptElement(order, true))
-    })
-    orders.delivered.forEach(order => {
-        deliveredOrdersList.appendChild(createReceiptElement(order, false))
+    let itemHTML = ''
+    orders.items.forEach(order => {
+        orderList.appendChild(createReceiptElement(order))
     })
 }
 
-function createReceiptElement(order, showDeliverButton) {
-    const receiptDiv = document.createElement('div')
-    receiptDiv.className = 'receipt'
-            
-    let itemsHTML = ''
-    order.items.forEach(item => {
-        const subtotal = item.price * item.quantity;
-        itemsHTML += `
-            <div class="receipt-item">
-            <span>${item.name} (${item.quantity}x)</span>
-            <span>Rp ${subtotal.toLocaleString('id-ID')}</span>
-            </div>
-            `
-    })
-    receiptDiv.innerHTML = `
-        <div class="receipt-header">
-            <span class="status-badge ${order.status === 'pending' ? 'status-pending' : 'status-delivered'}">
-                ${order.status === 'pending' ? '⏳ MENUNGGU' : '✅ DIANTAR'}
-            </span>
-            <h4>Pesanan #${order.id}</h4>
-            <div class="timestamp">${order.timestamp}</div>
-        </div>
-        <div class="receipt-body">
-            <p><strong>Nama:</strong> ${order.customerName}</p>
-            <div class="receipt-items">
-                ${itemsHTML}
-            </div>
-            <div class="receipt-total">
-                Total: Rp ${order.total.toLocaleString('id-ID')}
-            </div>
-        </div>
-        ${showDeliverButton ? `
-        <button class="btn btn-deliver" onclick="deliverOrder(${order.id})">
-            📦 Tandai Sudah Diantar
-        </button>
-         ` : ''}
-            `
-            
-    return receiptDiv
-}
-
-function deliverOrder(orderId) {
-    const orderIndex = orders.pending.findIndex(order => order.id === orderId);
-    if (orderIndex !== -1) {
-        const order = orders.pending[orderIndex];
-        order.status = 'delivered';
-        order.deliveredTime = new Date().toLocaleString('id-ID');
-                
-        orders.delivered.push(order);
-        orders.pending.splice(orderIndex, 1);
-                
-        displayOrders();
-        alert(`Pesanan #${orderId} telah diantar!`);
-    }
-}
 
 window.addEventListener('load', function() {
     initiaLizeMenu()
