@@ -3,6 +3,7 @@ const menuData = {
             'Cappuccino': 30000,
             'Latte': 35000,
             'Americano': 28000,
+            'Milk Tea': 30000,
             'Mocha': 38000,
             'Caramel Macchiato': 40000,
             'Iced Coffee': 30000,
@@ -119,6 +120,11 @@ document.getElementById('orderForm').addEventListener('submit', function(e) {
         return
     }
 
+    if (tempOrderItems.length === 0) {
+        alert('Silahkan tambahkan menu pesanan minimal 1 item sebelum kirim pesanan! ')
+        return
+    }
+
     const total = tempOrderItems.reduce((sum, item) => sum + (item.price * item.quantity), 0)
 
     const order = {
@@ -145,6 +151,7 @@ function displayOrders() {
     const deliveredOrdersList = document.getElementById('deliveredOrdersList')
 
     currentOrdersList.innerHTML = ''
+    deliveredOrdersList.innerHTML = ''
     orders.pending.forEach(order => {
         currentOrdersList.appendChild(createReceiptElement(order, true))
     })
@@ -159,13 +166,13 @@ function createReceiptElement(order, showDeliverButton) {
             
     let itemsHTML = ''
     order.items.forEach(item => {
-    const subtotal = item.price * item.quantity;
-    itemsHTML += `
-        <div class="receipt-item">
-        <span>${item.name} (${item.quantity}x)</span>
-        <span>Rp ${subtotal.toLocaleString('id-ID')}</span>
-        </div>
-        `
+        const subtotal = item.price * item.quantity;
+        itemsHTML += `
+            <div class="receipt-item">
+            <span>${item.name} (${item.quantity}x)</span>
+            <span>Rp ${subtotal.toLocaleString('id-ID')}</span>
+            </div>
+            `
     })
     receiptDiv.innerHTML = `
         <div class="receipt-header">
