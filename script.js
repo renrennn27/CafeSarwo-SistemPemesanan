@@ -1,5 +1,3 @@
-const orderForm = document.getElementById('orderForm')
-const customerName = document.getElementById('customerName')
 const menuData = {
             'Espresso': 25000,
             'Cappuccino': 30000,
@@ -51,8 +49,8 @@ function initiaLizeMenu () {
 }
 
 function addItem() {
-    const menuItem = document.getElementById('menuItem')
-    const Quantity = document.getElementById('menuQuantity')
+    const menuItem = document.getElementById('menuItem').value.trim()
+    const quantity = parseInt(document.getElementById('menuQuantity').value)
 
     if (!menuItem) {
         alert('Silahkan masukkan menu! ')
@@ -64,14 +62,14 @@ function addItem() {
         return
     }
 
-    if (Quantity < 1) {
+    if (quantity < 1) {
         alert('Jumlah minimal 1! ')
         return
     }
 
     const existingItem = tempOrderItems.find(item => item.name === menuItem)
     if (existingItem) {
-        existingItem.Quantity += Quantity
+        existingItem.quantity += quantity
     } else {
         tempOrderItems.push({
             name: menuItem,
@@ -89,7 +87,7 @@ function updateOrderItemDisplay() {
     const orderItems = document.getElementById('orderItems')
 
     if (tempOrderItems.length === 0) {
-        orderItems.innerHTML = '<p style="text-align: center; color: #95a5a6;">Belum ada item ditambahkan</p>'
+        orderItems.innerHTML = '<p style="color: #95a5a6;">Belum ada item ditambahkan</p>'
         return
     }
 
@@ -105,3 +103,112 @@ function updateOrderItemDisplay() {
         orderItems.appendChild(itemDiv)
     })
 }
+
+function removeItem(index) {
+    tempOrderItems.splice(index, 1);
+    updateOrderItemDisplay();
+}
+
+document.getElementById('orderForm').addEventListener('submit', function(e) {
+    e.preventDefault()
+
+    const customerName = document.getElementById('customerName').value.trim()
+
+    if (!customerName) {
+        alert('Silahkan masukkan nama pemesan! ')
+        return
+    }
+
+    const total = tempOrderItems.reduce((sum, item) => sum + (item.price * item.quantity), 0)
+
+    const order = {
+        id: orderIdCounter++,
+        customerName: customerName,
+        items: [...tempOrderItems],
+        total: total,
+        timestamp: new Date().toLocaleString('id-ID'),
+        status: 'pending'
+    }
+
+    orders.pending.push(order)
+    displayOrders()
+
+    document.getElementById('orderForm').reset()
+    tempOrderItems = []
+    updateOrderItemDisplay()
+
+    alert(`Pesanan untuk ${customerName} berhasil ditambahkan!`)
+})
+
+function displayOrders() {
+    const currentOrdersList = document.getElementById('currentOrdersList')
+    const deliveredOrdersList = document.getElementById('deliveredOrdersList')
+
+    currentOrdersList.innerHTML = ''
+    orders.pending.forEach(order => {
+        currentOrdersList.appendChild(createReceiptElement(order, true))
+    })
+    orders.delivered.forEach(order => {
+        deliveredOrdersList.appendChild(createReceiptElement(order, false))
+    })
+}
+
+function createReceiptElement(order, showDeliverButton) {
+    const receiptDiv = document.createElement('div')
+    receiptDiv.className = 'receipt'
+            
+    let itemsHTML = ''
+    order.items.forEach(item => {
+    const subtotal = item.price * item.quantity;
+    itemsHTML += `
+        <div class="receipt-item">
+        <span>${item.name} (${item.quantity}x)</span>
+        <span>Rp ${subtotal.toLocaleString('id-ID')}</span>
+        </div>
+        `
+    })
+    receiptDiv.innerHTML = `
+        <div class="receipt-header">
+            <span class="status-badge ${order.status === 'pending' ? 'status-pending' : 'status-delivered'}">
+                ${order.status === 'pending' ? '⏳ MENUNGGU' : '✅ DIANTAR'}
+            </span>
+            <h4>Pesanan #${order.id}</h4>
+            <div class="timestamp">${order.timestamp}</div>
+        </div>
+        <div class="receipt-body">
+            <p><strong>Nama:</strong> ${order.customerName}</p>
+            <div class="receipt-items">
+                ${itemsHTML}
+            </div>
+            <div class="receipt-total">
+                Total: Rp ${order.total.toLocaleString('id-ID')}
+            </div>
+        </div>
+        ${showDeliverButton ? `
+        <button class="btn btn-deliver" onclick="deliverOrder(${order.id})">
+            📦 Tandai Sudah Diantar
+        </button>
+         ` : ''}
+            `
+            
+    return receiptDiv
+}
+
+function deliverOrder(orderId) {
+    const orderIndex = orders.pending.findIndex(order => order.id === orderId);
+    if (orderIndex !== -1) {
+        const order = orders.pending[orderIndex];
+        order.status = 'delivered';
+        order.deliveredTime = new Date().toLocaleString('id-ID');
+                
+        orders.delivered.push(order);
+        orders.pending.splice(orderIndex, 1);
+                
+        displayOrders();
+        alert(`Pesanan #${orderId} telah diantar!`);
+    }
+}
+
+window.addEventListener('load', function() {
+    initiaLizeMenu()
+})
