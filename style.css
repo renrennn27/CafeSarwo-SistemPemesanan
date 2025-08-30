@@ -96,6 +96,7 @@ input[type="number"] {
     border: 1px solid #ccc;
     outline: none;
     transition: border 0.2s;
+    box-sizing: border-box;
 }
 
 input:focus {
@@ -113,17 +114,13 @@ input:focus {
 
 .order-item {
     display: flex;
-    justify-content: space-between;
+    gap: 10px;
     align-items: center;
-    background: #f1f1f1;
-    padding: 8px 12px;
-    border-radius: 8px;
-    margin-bottom: 8px;
 }
 
 /* Tombol */
 .btn {
-    padding: 8px 14px;
+    padding: 10px 14px;
     border-radius: 10px;
     border: none;
     cursor: pointer;
@@ -131,13 +128,11 @@ input:focus {
     transition: background 0.2s, transform 0.2s;
 }
 
-
 /* Variasi tombol */
 .btn-add {
     background: #3498db;
     color: #fff;
 }
-
 
 .btn-submit {
     width: 100%;
@@ -146,24 +141,14 @@ input:focus {
     margin-top: 10px;
 }
 
-
 .btn-remove {
     background: #e74c3c;
     color: #fff;
 }
 
-.btn-deliver {
-    background: #f39c12;
-    color: #fff;
-    width: 100%;
-    margin-top: 10px;
-}
-
-/* Orders Grid */
-.orders-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 20px;
+/* Bagian Daftar Pesanan (dulu orders-grid) */
+.orders-section {
+    margin-top: 20px;
 }
 
 /* Receipt */
@@ -182,23 +167,6 @@ input:focus {
     margin-bottom: 10px;
 }
 
-.status-badge {
-    padding: 4px 10px;
-    border-radius: 8px;
-    font-size: 0.8rem;
-    font-weight: bold;
-}
-
-.status-pending {
-    background: #f1c40f;
-    color: #fff;
-}
-
-.status-delivered {
-    background: #2ecc71;
-    color: #fff;
-}
-
 .receipt-items {
     margin: 10px 0;
 }
@@ -213,4 +181,5 @@ input:focus {
     font-weight: bold;
     text-align: right;
     color: #2c3e50;
+    margin-top: 10px;
 }
